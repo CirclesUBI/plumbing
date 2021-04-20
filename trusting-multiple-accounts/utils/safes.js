@@ -9,6 +9,7 @@ const TypedData = require("./typedData.js");
 
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+const CALL_OP = 0;
 const organizationTrustLimit = 100;
 
 
@@ -143,27 +144,16 @@ async function trustAccount(
     ){
   
     console.log("*** userSafe.options.address: ", userSafe.options.address);
+    console.log("*** orgOwnerAccount.address: ", orgOwnerAccount.address);
 
-    // const result = await execTransaction(orgOwnerAccount, orgSafe, {
-    //     safeAddress: orgSafe.options.address
-    //     to: hub.options.address,
-    //     from: orgOwnerAccount.address,
-    //     txData: hub.methods.trust(userSafe.options.address, organizationTrustLimit).encodeABI(),
-    // });
-
-    const txDataAddConnection = await hub.methods.trust(userSafe.options.address, 100).encodeABI();
-    const txHashAddConnection = await utils.executeSafeTx(account, { // utils not defined
-        safeAddress: orgSafe.options.address,
+    const txDataAddConnection = await hub.methods.trust(userSafe.options.address, organizationTrustLimit).encodeABI();
+    const result = await execTransaction(orgOwnerAccount, orgSafe, {
         to: hub.options.address,
+        from: orgOwnerAccount.address,
         txData: txDataAddConnection,
-        });    
-    
+    });
+
 }
-
-
-
-
-
 
 
 async function orgSignup(orgAccount, orgSafeInstance, hub){

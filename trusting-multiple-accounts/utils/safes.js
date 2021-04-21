@@ -142,6 +142,7 @@ async function trustAccount(
         from: orgOwnerAccount.address,
         txData: txDataAddConnection,
     });
+    return result.status;
 }
 
 async function orgSignup(orgAccount, orgSafeInstance, hub){

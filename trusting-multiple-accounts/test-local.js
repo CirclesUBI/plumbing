@@ -8,12 +8,8 @@ const keys = require('./keys.json');
 const SafeUtils = require("./utils/safes.js");
 
 
-
 const provider = new Web3.providers.HttpProvider(Config.ETHEREUM_NODE_RPC_URL);
 const web3 = new Web3(provider);
-const private_keys = keys.private_keys;
-
-console.log({private_keys});
 
 hubContract = new web3.eth.Contract(Hub.abi, process.env.HUB_ADDRESS);
 
@@ -30,16 +26,16 @@ async function runScript(){
     try {
       // Check that the Gnosis Safe address has signedup as an organization in the Hub
       const isOrgSignedup = await hubContract.methods.organizations(Config.ORG_SAFE_ADDR).call();
-      console.log("Check Safe is org: ", isOrgSignedup);
+      console.log("Check Safe", Config.ORG_SAFE_ADDR, "is an organization: ", isOrgSignedup);
       
       // Check the owner of the Gnosis Safe
       // Get Safe at given address
       const orgSafe = new web3.eth.Contract(Safe.abi, Config.ORG_SAFE_ADDR);
       // Call 'getOwners' method and return list of owners
       const owners = await orgSafe.methods.getOwners().call();
-      console.log({owners});
+      console.log("Owners of the organization:", owners);
       const isOwner = await orgSafe.methods.isOwner(orgOwnerAccount.address).call();
-      console.log("Is owner of the Org: ", isOwner);
+      console.log("Is", orgOwnerAccount.address, "owner of the Org: ", isOwner);
 
       try {
         // read contents of the file with the Safe addresses to be trusted
@@ -51,16 +47,17 @@ async function runScript(){
           if(!userAddr){
             continue;
           }
-          console.log("Trusting the user address: ", userAddr);
 
           // Trust from the organization Gnosis Safe
-          await SafeUtils.trustAccount(
+          const status = await SafeUtils.trustAccount(
             hubContract,
             orgOwnerAccount, // web3 account, owner of the organization Safe
             orgSafe, // the Safe of the Org
             userAddr, // the address of the Safe account to be trusted
             );
-          // TODO: Verify the trust connection
+          // Verify the trust connection
+          console.log("Trusting the user ", userAddr, "- Transaction was successful:", status);
+
         }
       } catch (err) {
           console.error(err);

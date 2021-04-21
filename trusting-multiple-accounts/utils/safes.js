@@ -3,19 +3,15 @@ const Safe = require('@circles/safe-contracts/build/contracts/GnosisSafe.json');
 const ProxyFactory = require('@circles/safe-contracts/build/contracts/ProxyFactory.json');
 const Token = require('circles-contracts/build/contracts/Token.json');
 
-
 const Config = require('../config.json');
 const TypedData = require("./typedData.js");
-
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const CALL_OP = 0;
 const organizationTrustLimit = 100;
 
-
 const provider = new Web3.providers.HttpProvider(Config.ETHEREUM_NODE_RPC_URL);
 const web3 = new Web3(provider);
-
 
 async function execTransaction(account, safeInstance, { to, from, value = 0, txData }) {
     const operation = 0; // CALL
@@ -40,7 +36,6 @@ async function execTransaction(account, safeInstance, { to, from, value = 0, txD
         nonce,
         verifyingContract: safeAddress,
     });
-
     const signature = TypedData.signTypedData(account.privateKey, typedData);
     const signatures = signature;
 
@@ -59,7 +54,6 @@ async function execTransaction(account, safeInstance, { to, from, value = 0, txD
         )
         .send({ from, gas: '100000000000' }); // @TODO: '1266349' ?  Need to change gas, safeTxGase, baseGas
 }
-
 
 async function createSafes(adminAccountAddress, accountAddresses) {
     const safeContract = new web3.eth.Contract(Safe.abi);
@@ -117,7 +111,6 @@ async function createSafes(adminAccountAddress, accountAddresses) {
   return { safeInstances, safeAddresses };
 }
 
-
 async function createTokens(accounts, safeInstances, hub, adminAccountAddress) {
     let tokenInstances = [];
     let tokenAddresses = [];
@@ -138,23 +131,18 @@ async function createTokens(accounts, safeInstances, hub, adminAccountAddress) {
 
 async function trustAccount(
     hub,
-    orgOwnerAccount, // owner of the org 
-    orgSafe, // the Safe of the Org
-    userSafe, // the Safe account to be trusted
+    orgOwnerAccount, // web3 instance, owner of the organization Safe
+    orgSafe, // the Safe of the Organization
+    userSafeAddr, // the address of the Safe account to be trusted
     ){
   
-    console.log("*** userSafe.options.address: ", userSafe.options.address);
-    console.log("*** orgOwnerAccount.address: ", orgOwnerAccount.address);
-
-    const txDataAddConnection = await hub.methods.trust(userSafe.options.address, organizationTrustLimit).encodeABI();
+    const txDataAddConnection = await hub.methods.trust(userSafeAddr, organizationTrustLimit).encodeABI();
     const result = await execTransaction(orgOwnerAccount, orgSafe, {
         to: hub.options.address,
         from: orgOwnerAccount.address,
         txData: txDataAddConnection,
     });
-
 }
-
 
 async function orgSignup(orgAccount, orgSafeInstance, hub){
     await execTransaction(orgAccount, orgSafeInstance, {
@@ -163,8 +151,6 @@ async function orgSignup(orgAccount, orgSafeInstance, hub){
         txData: hub.methods.organizationSignup().encodeABI(),
         });
 }
-
-
 
 module.exports = {
     createTokens,

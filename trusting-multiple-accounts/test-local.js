@@ -42,25 +42,26 @@ async function runScript(){
       console.log("Is owner of the Org: ", isOwner);
 
       try {
-          // read contents of the file with the Safe addresses to be trusted
-          const accountsToTrust = Fs.readFileSync(Config.USR_SAFE_ADDRS_PATH,'UTF-8').split(/\r?\n/);
-          accountsToTrust.forEach(async (userAddr) => {
-            if (userAddr.length > 3) {
-              console.log(userAddr);
-              // Trust from the organization Gnosis Safe
-              // Get Safe at given address
-              const userSafe = new web3.eth.Contract(Safe.abi, userAddr);
-              //console.log({orgSafe});
-              console.log("orgOwnerAccount.privateKey: ", orgOwnerAccount.privateKey);
-              await SafeUtils.trustAccount(
-                hubContract,
-                orgOwnerAccount, // owner of the org 
-                orgSafe, // the Safe of the Org
-                userSafe, // the Safe account to be trusted
-                );
-            }
-              
-          });
+        // read contents of the file with the Safe addresses to be trusted
+        const accountsToTrust = Fs.readFileSync(Config.USR_SAFE_ADDRS_PATH,'UTF-8').split(/\r?\n/);
+
+        // Make sure the transactions are not executed in paralel.
+        // We need need to wait for the tx to succed for getting a new nonce.
+        for (let userAddr of accountsToTrust) {
+          if(!userAddr){
+            continue;
+          }
+          console.log("Trusting the user address: ", userAddr);
+
+          // Trust from the organization Gnosis Safe
+          await SafeUtils.trustAccount(
+            hubContract,
+            orgOwnerAccount, // web3 account, owner of the organization Safe
+            orgSafe, // the Safe of the Org
+            userAddr, // the address of the Safe account to be trusted
+            );
+          // TODO: Verify the trust connection
+        }
       } catch (err) {
           console.error(err);
       }

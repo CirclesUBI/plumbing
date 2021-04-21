@@ -67,4 +67,6 @@ async function runScript(){
     }
 }
 
-runScript();
+module.exports = {
+  runScript
+};

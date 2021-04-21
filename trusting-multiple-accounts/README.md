@@ -29,10 +29,10 @@ Copy the Safe accounts to be trusted in a file and indicate its path in the conf
 Run the script to trust the multiple accounts:
 
 ```bash
-node test-local.js
+npm run start
 ```
 
-## Test
+## Testing environment
 
 If you want to create a **testing environment**
 
@@ -49,3 +49,9 @@ node create-test-env.js
 ```
 
 The constracts will be deployed and the variables will be wrtten in the config file and the necessary files.
+
+Then, you can the script to trust the multiple accounts:
+
+```bash
+npm run start
+```

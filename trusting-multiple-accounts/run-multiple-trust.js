@@ -17,7 +17,7 @@ hubContract = new web3.eth.Contract(Hub.abi, process.env.HUB_ADDRESS);
 async function runScript(){
 
     // Get the organization owner's account from a private key
-    const orgOwnerPrivateKey = Fs.readFileSync(Config.ORG_SAFE_OWNER_PRIVATE_KEY_PATH).toString();
+    const orgOwnerPrivateKey = Fs.readFileSync(Config.ORG_SAFE_OWNER_PRIVATE_KEY_PATH).toString().split(/\r?\n/)[0];
     const orgOwnerAccount = web3.eth.accounts.privateKeyToAccount(orgOwnerPrivateKey);
 
     // Get the Hub

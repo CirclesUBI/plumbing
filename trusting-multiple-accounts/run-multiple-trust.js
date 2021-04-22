@@ -23,6 +23,9 @@ async function runScript(){
     // Get the Hub
     const hubContract = new web3.eth.Contract(Hub.abi, Config.HUB_ADDR);
 
+    let totalAccounts = 0;
+    let totalTrustedAccounts = 0;
+
     try {
       // Check that the Gnosis Safe address has signedup as an organization in the Hub
       const isOrgSignedup = await hubContract.methods.organizations(Config.ORG_SAFE_ADDR).call();
@@ -44,9 +47,12 @@ async function runScript(){
         // Make sure the transactions are not executed in paralel.
         // We need need to wait for the tx to succed for getting a new nonce.
         for (let userAddr of accountsToTrust) {
-          if(!userAddr){
+          if(!userAddr.startsWith("0x")){
             continue;
           }
+
+          // Count the number of accounts we receive in the input
+          totalAccounts++;
 
           // Trust from the organization Gnosis Safe
           const status = await SafeUtils.trustAccount(
@@ -58,6 +64,11 @@ async function runScript(){
           // Verify the trust connection
           console.log("Trusting the user ", userAddr, "- Transaction was successful:", status);
 
+          // Counting the successful transactions
+          if(status){
+            totalTrustedAccounts++;
+          }
+
         }
       } catch (err) {
           console.error(err);
@@ -65,6 +76,11 @@ async function runScript(){
     } catch (err) {
         console.error(err);
     }
+
+    // Print reports
+    console.log("Total accounts received as input:", totalAccounts);
+    console.log("Total accounts successfully trusted:", totalTrustedAccounts);
+
 }
 
 module.exports = {

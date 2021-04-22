@@ -4,8 +4,8 @@ We need a script which automatically create ~500-1000 trust connections from a S
 
 Inputs:
 
-    .txt file with a list of Circles account addresses (ca. ~500-1000)
-    Private key of a Safe owner
+- `.txt` file with a list of Circles account addresses (ca. ~500-1000), one address per line in the file
+- Private key of a Safe owner
 
 ## Usage
 
@@ -24,7 +24,7 @@ cp config.py.example config.py
 
 Copy the private key of the Safe owner in a file and indicate its path in the config file, in the variable `ORG_SAFE_OWNER_PRIVATE_KEY_PATH`. **Keep this private key secret.**
 
-Copy the Safe accounts to be trusted in a file and indicate its path in the config file, in the variable `USR_SAFE_ADDRS_PATH`.
+Copy the Safe account addresses to be trusted in a file (one address per line) and indicate its path in the config file, in the variable `USR_SAFE_ADDRS_PATH`.
 
 Run the script to trust the multiple accounts:
 
@@ -50,7 +50,7 @@ node create-test-env.js
 
 The constracts will be deployed and the variables will be wrtten in the config file and the necessary files.
 
-Then, you can the script to trust the multiple accounts:
+Then you can trust the multiple accounts:
 
 ```bash
 npm run start

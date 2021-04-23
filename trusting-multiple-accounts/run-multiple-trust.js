@@ -8,7 +8,8 @@ const keys = require('./keys.json');
 const SafeUtils = require("./utils/safes.js");
 
 
-const provider = new Web3.providers.HttpProvider(Config.ETHEREUM_NODE_RPC_URL);
+//const provider = new Web3.providers.HttpProvider(Config.ETHEREUM_NODE_RPC_URL);
+const provider = new Web3.providers.WebsocketProvider(Config.ETHEREUM_NODE_WS);
 const web3 = new Web3(provider);
 
 hubContract = new web3.eth.Contract(Hub.abi, process.env.HUB_ADDRESS);

@@ -4,7 +4,6 @@ const Hub = require('circles-contracts/build/contracts/Hub.json');
 const Safe = require('@circles/safe-contracts/build/contracts/GnosisSafe.json');
 
 const Config = require('./config.json');
-const keys = require('./keys.json');
 const SafeUtils = require("./utils/safes.js");
 
 

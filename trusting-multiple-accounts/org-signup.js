@@ -2,32 +2,12 @@ const Web3 = require("web3");
 const Fs = require("fs");
 const Safe = require('@circles/safe-contracts/build/contracts/GnosisSafe.json');
 const Hub = require('circles-contracts/build/contracts/Hub.json');
-const SafeUtils = require("./utils/safes.js");
+const SafeUtils = require("./utils/safes-xdai.js");
 const Config = require('./config.json');
 
 const provider = new Web3.providers.WebsocketProvider(Config.ETHEREUM_NODE_WS);
 const web3 = new Web3(provider);
 
-hubContract = new web3.eth.Contract(Hub.abi, process.env.HUB_ADDRESS);
-
-async function isUnlocked(web3, address) {
-    try {
-        await web3.eth.sign("", address);
-    } catch (e) {
-        return false;
-    }
-    return true;
-}
-
-// function unlockAccountIfNeeded(account, password, unlock_duration_sec) {
-//     if (typeof(unlock_duration_sec)==='undefined') unlock_duration_sec = 300;
-
-
-//     if (isUnlocked(account)) {
-//         console.log("Account " + account + " is locked. Unlocking")
-//         web3.personal.unlockAccount(account, password, unlock_duration_sec);
-//     }
-// }
 
 async function run(){
     // Get the organization owner's account from a private key
@@ -51,8 +31,7 @@ async function run(){
         const isOwner = await orgSafe.methods.isOwner(orgOwnerAccount.address).call();
         console.log("Is", orgOwnerAccount.address, "owner of the Safe: ", isOwner);
 
-        // await unlockAccountIfNeeded(orgOwnerAccount.address, password, 10);
-        
+        // Log the version of the Safes lib we are using
         const version = await orgSafe.methods.VERSION().call();
         console.log({version});
         // Organization signup

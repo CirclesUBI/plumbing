@@ -2,19 +2,22 @@ const Web3 = require("web3");
 const Fs = require("fs");
 const Hub = require('circles-contracts/build/contracts/Hub.json');
 const Safe = require('@circles/safe-contracts/build/contracts/GnosisSafe.json');
-
 const Config = require('./config.json');
-const SafeUtils = require("./utils/safes.js");
+
+async function runScript(environment){
+
+    const SafeUtils =
+    environment == "prod"
+    ? require("./utils/safes-xdai.js")
+    : require("./utils/safes-local.js");
 
 
-//const provider = new Web3.providers.HttpProvider(Config.ETHEREUM_NODE_RPC_URL);
-const provider = new Web3.providers.WebsocketProvider(Config.ETHEREUM_NODE_WS);
-const web3 = new Web3(provider);
+    const provider =
+      environment == "prod"
+      ? new Web3.providers.WebsocketProvider(Config.ETHEREUM_NODE_WS)
+      : new Web3.providers.HttpProvider(Config.ETHEREUM_NODE_RPC_URL);
 
-hubContract = new web3.eth.Contract(Hub.abi, process.env.HUB_ADDRESS);
-
-
-async function runScript(){
+    const web3 = new Web3(provider);
 
     // Get the organization owner's account from a private key
     const orgOwnerPrivateKey = Fs.readFileSync(Config.ORG_SAFE_OWNER_PRIVATE_KEY_PATH).toString().split(/\r?\n/)[0];

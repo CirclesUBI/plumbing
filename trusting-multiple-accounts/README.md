@@ -32,6 +32,16 @@ Run the script to trust the multiple accounts:
 npm run start
 ```
 
+### Organization signup
+
+**Work in process**
+
+If you need to signup an organization that is a Safe contract, you can execute:
+
+```bash
+node org-signup.js
+```
+
 ## Testing environment
 
 If you want to create a **testing environment**
@@ -50,8 +60,8 @@ node create-test-env.js
 
 The constracts will be deployed and the variables will be wrtten in the config file and the necessary files.
 
-Then you can trust the multiple accounts:
+Then you can trust the multiple accounts in a local environment:
 
 ```bash
-npm run start
+npm test
 ```

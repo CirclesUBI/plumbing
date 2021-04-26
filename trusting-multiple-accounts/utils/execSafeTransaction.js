@@ -59,7 +59,7 @@ async function execTransaction(account, safeInstance, { to, value = 0, txData })
     const gasLimit = safeTxGas + baseGas + max;
     
     const tx = await signAndSendRawTransaction(account, safeInstance.options.address, data, gas=gasLimit);
-    console.log(tx)
+    return tx;
 }
 
 module.exports = execTransaction;

@@ -30,7 +30,8 @@ async function runScript(environment){
   const hubContract = new web3.eth.Contract(Hub.abi, Config.HUB_ADDR);
 
   let totalAccounts = 0;
-  let totalTrustedAccounts = 0;
+  let newTrustedAccounts = 0;
+  let alreadyTrustedAccounts = 0;
   let orgSafe;
 
   // create a safe, if we haven't already
@@ -65,47 +66,53 @@ async function runScript(environment){
     const isOwner = await orgSafe.methods.isOwner(orgOwnerAccount.address).call();
     console.log("Is", orgOwnerAccount.address, "owner of the Org: ", isOwner);
 
-    // try {
-    //   // read contents of the file with the Safe addresses to be trusted
-    //   const accountsToTrust = Fs.readFileSync(Config.USR_SAFE_ADDRS_PATH,'UTF-8').split(/\r?\n/);
+    try {
+      // read contents of the file with the Safe addresses to be trusted
+      const accountsToTrust = Fs.readFileSync(Config.USR_SAFE_ADDRS_PATH,'UTF-8').split(/\r?\n/);
 
-    //   // Make sure the transactions are not executed in paralel.
-    //   // We need need to wait for the tx to succed for getting a new nonce.
-    //   for (let userAddr of accountsToTrust) {
-    //     if(!userAddr.startsWith("0x")){
-    //       continue;
-    //     }
+      // Make sure the transactions are not executed in paralel.
+      // We need need to wait for the tx to succed for getting a new nonce.
+      for (let userAddr of accountsToTrust) {
+        if(!userAddr.startsWith("0x")){
+          continue;
+        }
 
-    //     // Count the number of accounts we receive in the input
-    //     totalAccounts++;
+        // Count the number of accounts we receive in the input
+        totalAccounts++;
 
-    //     // Trust from the organization Gnosis Safe
-    //     const status = await SafeUtils.trustAccount(
-    //       hubContract,
-    //       orgOwnerAccount, // web3 account, owner of the organization Safe
-    //       orgSafe, // the Safe of the Org
-    //       userAddr, // the address of the Safe account to be trusted
-    //       );
-    //     // Verify the trust connection
-    //     console.log("Trusting the user ", userAddr, "- Transaction was successful:", status);
+        // Check whether the trust connection already existed
+        const alreadyTrusted = await hubContract.methods.limits(orgSafe.options.address , userAddr).call() == 0 ? false : true;
+        if (!alreadyTrusted){
+          // Trust from the organization Gnosis Safe
+          const status = await SafeUtils.trustAccount(
+            hubContract,
+            orgOwnerAccount, // web3 account, owner of the organization Safe
+            orgSafe, // the Safe of the Org
+            userAddr, // the address of the Safe account to be trusted
+            );
+          // Verify the trust connection
+          console.log("Trusting the user ", userAddr, "- Transaction was successful:", status);
 
-    //     // Counting the successful transactions
-    //     if(status){
-    //       totalTrustedAccounts++;
-    //     }
+          // Counting the successful transactions
+          if(status){
+            newTrustedAccounts++;
+          }
+        }else{
+          alreadyTrustedAccounts++;
+        }
 
-    //   }
-    // } catch (err) {
-    //     console.error(err);
-    // }
+      }
+    } catch (err) {
+        console.error(err);
+    }
   } catch (err) {
       console.error(err);
   }
 
   // Print reports
   console.log("Total accounts received as input:", totalAccounts);
-  console.log("Total accounts successfully trusted:", totalTrustedAccounts);
-
+  console.log("Total accounts already trusted:", alreadyTrustedAccounts);
+  console.log("Total new accounts successfully trusted:", newTrustedAccounts);
 }
 
 module.exports = {

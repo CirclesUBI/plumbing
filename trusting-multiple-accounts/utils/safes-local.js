@@ -90,6 +90,7 @@ async function createSafes(adminAccountAddress, accountAddresses) {
             ZERO_ADDRESS,
             '0x',
             ZERO_ADDRESS,
+            ZERO_ADDRESS,
             0,
             ZERO_ADDRESS,
         )

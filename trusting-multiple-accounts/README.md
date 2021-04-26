@@ -24,22 +24,14 @@ cp config.json.example config.json
 
 Copy the private key of the Safe owner in a file and indicate its path in the config file, in the variable `ORG_SAFE_OWNER_PRIVATE_KEY_PATH`. **Keep this private key secret.**
 
+If you already own a Safe that represents an Organization, write its address in the variable `ORG_SAFE_ADDR` in the config file. The script signes up the Safe as an organization in the given Hub (in variable `HUB_ADDR` in the config file) if it is not signed up yet. Likewise, if no `ORG_SAFE_ADDR` is given in the config file, a new Safe is created.
+
 Copy the Safe account addresses to be trusted in a file (one address per line) and indicate its path in the config file, in the variable `USR_SAFE_ADDRS_PATH`.
 
 Run the script to trust the multiple accounts:
 
 ```bash
 npm run start
-```
-
-### Organization signup
-
-**Work in process**
-
-If you need to signup an organization that is a Safe contract, you can execute:
-
-```bash
-node org-signup.js
 ```
 
 ## Testing environment

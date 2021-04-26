@@ -2,7 +2,10 @@ const Web3 = require("web3");
 const Fs = require("fs");
 const Hub = require('circles-contracts/build/contracts/Hub.json');
 const Safe = require('@circles/safe-contracts/build/contracts/GnosisSafe.json');
+const ProxyFactory = require('@circles/safe-contracts/build/contracts/ProxyFactory.json');
 const Config = require('./config.json');
+const createSafeWithProxy = require('./utils/createSafeWithProxy');
+const SafeUtils = require("./utils/safes-xdai.js");
 
 async function runScript(environment){
   
@@ -20,7 +23,7 @@ async function runScript(environment){
   const web3 = new Web3(provider);
 
   // Get the organization owner's account from a private key
-  const orgOwnerPrivateKey = Fs.readFileSync(Config.ORG_SAFE_OWNER_PRIVATE_KEY_PATH).toString().split(/\r?\n/)[0];
+  const orgOwnerPrivateKey = Config.SAFE_OWNER_PRIVATE_KEY || Fs.readFileSync(Config.ORG_SAFE_OWNER_PRIVATE_KEY_PATH).toString().split(/\r?\n/)[0];
   const orgOwnerAccount = web3.eth.accounts.privateKeyToAccount(orgOwnerPrivateKey);
 
   // Get the Hub
@@ -28,15 +31,34 @@ async function runScript(environment){
 
   let totalAccounts = 0;
   let totalTrustedAccounts = 0;
+  let orgSafe;
+
+  // create a safe, if we haven't already
+  if (!Config.ORG_SAFE_ADDR) {
+    try {
+      console.log('Creating safe ...');
+      const safe = new web3.eth.Contract(Safe.abi, Config.SAFE_MASTER_COPY);
+      const proxy = new web3.eth.Contract(ProxyFactory.abi, Config.PROXY_FACTORY);
+      orgSafe = await createSafeWithProxy(proxy, safe, orgOwnerAccount)
+      console.log('Created safe at: ', orgSafe.options.address);
+    } catch (err) {
+      console.error(err);
+    }
+  } else {
+    orgSafe = new web3.eth.Contract(Safe.abi, Config.ORG_SAFE_ADDR);
+  }
+
+  // Check that the Gnosis Safe address has signedup as an organization in the Hub
+  const isOrgSignedup = await hubContract.methods.organizations(Config.ORG_SAFE_ADDR).call();
+  console.log("Check Safe", Config.ORG_SAFE_ADDR, "is an organization: ", isOrgSignedup);
+
+  if (!isOrgSignedup) {
+    console.log('Signing up as organization ...');
+    await SafeUtils.orgSignup(orgOwnerAccount, orgSafe, hubContract);
+  }
 
   try {
-    // Check that the Gnosis Safe address has signedup as an organization in the Hub
-    const isOrgSignedup = await hubContract.methods.organizations(Config.ORG_SAFE_ADDR).call();
-    console.log("Check Safe", Config.ORG_SAFE_ADDR, "is an organization: ", isOrgSignedup);
-    
     // Check the owner of the Gnosis Safe
-    // Get Safe at given address
-    const orgSafe = new web3.eth.Contract(Safe.abi, Config.ORG_SAFE_ADDR);
     // Call 'getOwners' method and return list of owners
     const owners = await orgSafe.methods.getOwners().call();
     console.log("Owners of the organization:", owners);

@@ -19,7 +19,7 @@ Copy config file and edit variables according to your needs.
 When running against the local ganache instance no changes are required here.
 
 ```bash
-cp config.py.example config.py
+cp config.json.example config.json
 ```
 
 Copy the private key of the Safe owner in a file and indicate its path in the config file, in the variable `ORG_SAFE_OWNER_PRIVATE_KEY_PATH`. **Keep this private key secret.**

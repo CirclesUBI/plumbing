@@ -16,12 +16,6 @@ const web3 = new Web3(provider);
 
 async function execTransaction(account, safeInstance, { to, from, value = 0, txData }) {
     const operation = 0; // CALL
-    // const safeTxGas = '1000000000'; // based on data // @TODO: CHANGE
-    // const baseGas = '10000000'; // general transaction // @TODO: CHANGE
-    // const gasPrice = 0; // no refund
-    //const safeTxGas = '100000'; // based on data // @TODO: CHANGE
-    //const baseGas = '100000'; // general transaction // @TODO: CHANGE
-    
     const gasPrice = 1; // no refund
     const gasToken = ZERO_ADDRESS; // Paying in Eth
     const refundReceiver = ZERO_ADDRESS;
@@ -29,7 +23,6 @@ async function execTransaction(account, safeInstance, { to, from, value = 0, txD
     const safeAddress = safeInstance.options.address;
 
     const safeTxGas = await web3.eth.estimateGas({to, from: safeInstance.options.address, value, data: txData});
-    //await EstimateGas.estimateTxGas(safeInstance, to, value, txData, operation);
     const baseGas = await EstimateGas.estimateBaseGas(safeInstance, to, value, txData, operation,
       safeTxGas, gasToken, refundReceiver, 1, nonce);
 
@@ -66,8 +59,6 @@ async function execTransaction(account, safeInstance, { to, from, value = 0, txD
         signatures,
         )
         .encodeABI();
-        //.send({ from, gas: '100000000000' }); // @TODO: '1266349' ?  Need to change gas, safeTxGase, baseGas
-        //.send({ from, gas: '100000' }); // @TODO: '1266349' ?  Need to change gas, safeTxGase, baseGas
 
     const ethNonce = await web3.eth.getTransactionCount(account.address, 'pending')
     const max = Math.floor(Math.max((safeTxGas * 64) / 63, safeTxGas + 2500) + 500);

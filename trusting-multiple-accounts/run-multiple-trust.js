@@ -4,16 +4,16 @@ const Hub = require('circles-contracts/build/contracts/Hub.json');
 const Safe = require('@circles/safe-contracts/build/contracts/GnosisSafe.json');
 const ProxyFactory = require('@circles/safe-contracts/build/contracts/ProxyFactory.json');
 const Config = require('./config.json');
-const createSafeWithProxy = require('./utils/createSafeWithProxy');
-const SafeUtils = require("./utils/safes-xdai.js");
 
 async function runScript(environment){
+  
+  const createSafeWithProxy = environment == "prod"
+  ? require('./utils/createSafeWithProxy'): null;
   
   const SafeUtils =
   environment == "prod"
   ? require("./utils/safes-xdai.js")
   : require("./utils/safes-local.js");
-
 
   const provider =
     environment == "prod"

@@ -1,0 +1,10 @@
+{
+  "ETHEREUM_NODE_RPC_URL": "http://localhost:8545",
+  "ETHEREUM_NODE_WS": "",
+  "ORG_SAFE_OWNER_PRIVATE_KEY_PATH": "./org-safe-owner-private-key.txt",
+  "USR_SAFE_ADDRS_PATH": "./data/usr-safe-addrs.txt",
+  "ORG_SAFE_ADDR": "",
+  "HUB_ADDR": "",
+  "SAFE_MASTER_COPY": "",
+  "PROXY_FACTORY": ""
+}

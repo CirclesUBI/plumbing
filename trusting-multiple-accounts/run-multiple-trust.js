@@ -42,6 +42,13 @@ async function runScript(environment){
       const proxy = new web3.eth.Contract(ProxyFactory.abi, Config.PROXY_FACTORY);
       orgSafe = await createSafeWithProxy(proxy, safe, orgOwnerAccount)
       console.log('Created safe at: ', orgSafe.options.address);
+      // Write the Org Safe address in the config.json file
+      Config.ORG_SAFE_ADDR = orgSafe.options.address;
+      Fs.writeFile('./config.json', JSON.stringify(Config, null, 2), err => {
+          // Checking for errors
+          if (err) throw err; 
+          console.log("Done writing ORG_SAFE_ADDR to Config file"); // Success
+      });
     } catch (err) {
       console.error(err);
     }

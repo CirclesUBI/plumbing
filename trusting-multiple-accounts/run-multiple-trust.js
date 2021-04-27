@@ -100,7 +100,6 @@ async function runScript(environment){
         }else{
           alreadyTrustedAccounts++;
         }
-
       }
     } catch (err) {
         console.error(err);

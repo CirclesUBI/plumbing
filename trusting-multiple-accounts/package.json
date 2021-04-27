@@ -9,7 +9,8 @@
     "test": "node test-local.js"
   },
   "contributors": [
-    "llunaCreixent"
+    "Elena San Miguel (https://github.com/llunaCreixent)",
+    "Sarah Friend (https://github.com/ana0)"
   ],
   "license": "AGPL",
   "dependencies": {

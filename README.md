@@ -6,6 +6,7 @@ This repository is a collection of different scripts / small programs which have
 
 * `90days` Run a script to issue UBI for all known Circles Tokens
 * `relayer-invalid-tx` Clean up invalid transactions from the Relayer database
+* `trusting-multiple-accounts` Deploys an organization and automatically trusts many user accounts from a list
 
 ## Development
 

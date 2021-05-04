@@ -1,2 +1,2 @@
-const RunMultipleTrust = require("./run-multiple-trust");
-RunMultipleTrust.runScript("prod");
+const runMultipleTrust = require('./run-multiple-trust');
+runMultipleTrust.runScript('prod');

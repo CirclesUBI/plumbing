@@ -1,0 +1,17 @@
+{
+  "name": "update-db-edges",
+  "version": "1.0.0",
+  "description": "Script to update the edges in the database with the correct value from the blockchain",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "contributors": [
+    "Elena San Miguel (https://github.com/llunaCreixent)"
+  ],
+  "license": "AGPL",
+  "dependencies": {
+
+  }
+}

@@ -12,6 +12,9 @@
   ],
   "license": "AGPL",
   "dependencies": {
-
+    "@circles/core": "^2.10.10",
+    "isomorphic-fetch": "^3.0.0",
+    "pg": "^8.7.1",
+    "sequelize": "^6.8.0"
   }
 }

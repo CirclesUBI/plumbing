@@ -13,7 +13,7 @@ async function upsertEdge(edge) {
         });
     }
 }
-  
+
 async function destroyEdge(edge) {
     return Edge.destroy({
         where: {
@@ -33,7 +33,7 @@ async function getOldestEdges(limit) {
 }
 
 module.exports = {
-    upsertEdge, 
+    upsertEdge,
     destroyEdge,
     getOldestEdges,
 }

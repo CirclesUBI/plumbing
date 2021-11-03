@@ -131,6 +131,9 @@ async function updateEdges(edges){
 async function updateAllEdges(){
 
     // Retrieve all the edges from the db in batches
+    // This function iterates over all the edges sorted by updatedAt
+    // The stop condition of the loop is when the last updated edge
+    // is updated in the present date (same day as today)
     const limit = 10000
     let isOld = true
     let count = 0

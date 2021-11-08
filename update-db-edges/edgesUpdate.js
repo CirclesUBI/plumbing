@@ -112,8 +112,6 @@ class EdgeUpdateManager {
             console.log(
                 `Found error with checking sending limit for token of ${edge.token} from ${edge.from} to ${edge.to} [${error}]`
             );
-
-            await destroyEdge(edge);
         }
     }
 }

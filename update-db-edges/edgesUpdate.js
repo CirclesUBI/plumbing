@@ -58,23 +58,29 @@ class EdgeUpdateManager {
 
     async updateEdge(edge, tokenAddress) {
         // Don't store edges from relayer
-
         if (edge.from === config.TX_SENDER_ADDRESS_OLD || edge.from === config.TX_SENDER_ADDRESS_NEW) {
+            console.log("****Don't store edges from relayer");
+            await destroyEdge(edge);
             return;
         }
 
         // Don't store edges to or from zero address
         if (edge.to === ZERO_ADDRESS || edge.from === ZERO_ADDRESS) {
+            console.log("****Don't store edges to or from zero address");
+            await destroyEdge(edge);
             return;
         }
 
         // Ignore self-referential edges
         if (edge.from === edge.to) {
+            console.log("****Ignore self-referential edges");
+            await destroyEdge(edge);
             return;
         }
 
         // Ignore duplicates
         if (this.checkDuplicate(edge)) {
+            console.log("****Ignore duplicates");
             return;
         }
 

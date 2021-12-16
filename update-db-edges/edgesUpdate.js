@@ -86,7 +86,6 @@ class EdgeUpdateManager {
 
         // Update edge capacity
         try {
-            console.log("Get send limit");
             console.log({edge});
             // Get send limit
             const limit = await hubContract.methods
@@ -120,14 +119,16 @@ class EdgeUpdateManager {
 async function updateEdges(edges){
     const edgeUpdateManager = new EdgeUpdateManager();
     for await (const edge of edges) {
-      const result = await getTokenAddressFromGraph(edge.token.toLocaleLowerCase())
-      const tokenAddress = result[0].id
-      await edgeUpdateManager.updateEdge(
-        {
-          ...edge,
-        },
-        web3.utils.toChecksumAddress(tokenAddress)
-      );
+        const tokenAddress = await hubContract.methods.userToToken(edge.token).call();
+        console.log("Token address: ", tokenAddress, "edge token: ", edge.token );
+        //const result = await getTokenAddressFromGraph(edge.token.toLocaleLowerCase())
+        //const tokenAddress = web3.utils.toChecksumAddress(result[0].id)
+        await edgeUpdateManager.updateEdge(
+            {
+            ...edge,
+            },
+            tokenAddress
+        );
     }
 }
 

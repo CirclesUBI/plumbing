@@ -2,7 +2,7 @@ const Web3 = require('web3');
 const HubContract = require('circles-contracts/build/contracts/Hub.json');
 const TokenContract = require('circles-contracts/build/contracts/Token.json');
 const { getTokenAddressFromGraph } = require('./graph.js')
-const { upsertEdge, destroyEdge, getOldestEdges } = require('./edgesDatabase.js');
+const { upsertEdge, destroyEdge, getOldestEdges, getUserEdges } = require('./edgesDatabase.js');
 const config = require('./config.json');
 
 const day = 1000*60*60*24;
@@ -115,6 +115,10 @@ class EdgeUpdateManager {
     }
 }
 
+// Helper method to wait for a few milliseconds before we move on
+async function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 async function updateEdges(edges){
     const edgeUpdateManager = new EdgeUpdateManager();
@@ -129,6 +133,7 @@ async function updateEdges(edges){
             },
             tokenAddress
         );
+        await wait(123);
     }
 }
 
@@ -143,7 +148,9 @@ async function updateAllEdges(){
     let isOld = true
     let count = 0
     while (isOld){
-        const edges = await getOldestEdges(limit);
+        // Here you can choose between updating all the edges or only the edge of one specific user
+        // const edges = await getOldestEdges(limit);
+        const edges = await getUserEdges(limit, ""); // Example of Safe address
         console.log("Edges.length: ", edges.length);
         console.log("updatedAt of oldest: ", edges[0].updatedAt);
         await updateEdges(edges);

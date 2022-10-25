@@ -1,3 +1,5 @@
+const { Op } = require("sequelize");
+
 const { Edge } = require('./models/edges');
 
 async function upsertEdge(edge) {
@@ -32,8 +34,23 @@ async function getOldestEdges(limit) {
     });
 }
 
+async function getUserEdges(limit, address) {
+    return await Edge.findAll({
+        order: [['updatedAt', 'ASC']],
+        limit: limit,
+        raw: true,
+        where: {
+            [Op.or]: [
+              { from: address },
+              { to: address }
+            ]
+        }
+    });
+}
+
 module.exports = {
     upsertEdge,
     destroyEdge,
     getOldestEdges,
+    getUserEdges,
 }

@@ -1,11 +1,11 @@
 const Web3 = require('web3');
-const HubContract = require('circles-contracts/build/contracts/Hub.json');
-const TokenContract = require('circles-contracts/build/contracts/Token.json');
+const HubContract = require('@circles/circles-contracts/build/contracts/Hub.json');
+const TokenContract = require('@circles/circles-contracts/build/contracts/Token.json');
 const { getTokenAddressFromGraph } = require('./graph.js')
 const { upsertEdge, destroyEdge, getOldestEdges, getUserEdges } = require('./edgesDatabase.js');
 const config = require('./config.json');
 
-const day = 1000*60*60*24;
+const day = 1000 * 60 * 60 * 24;
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 const web3 = new Web3(
@@ -50,7 +50,7 @@ class EdgeUpdateManager {
     checkDuplicate(edge) {
         const key = getKey(edge.from, edge.to, edge.token);
         if (key in this.checkedEdges) {
-        return true;
+            return true;
         }
         this.checkedEdges[key] = true;
         return false;
@@ -86,7 +86,7 @@ class EdgeUpdateManager {
 
         // Update edge capacity
         try {
-            console.log({edge});
+            console.log({ edge });
             // Get send limit
             const limit = await hubContract.methods
                 .checkSendLimit(edge.token, edge.from, edge.to)
@@ -120,16 +120,16 @@ async function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function updateEdges(edges){
+async function updateEdges(edges) {
     const edgeUpdateManager = new EdgeUpdateManager();
     for await (const edge of edges) {
         const tokenAddress = await hubContract.methods.userToToken(edge.token).call();
-        console.log("Token address: ", tokenAddress, "edge token: ", edge.token );
+        console.log("Token address: ", tokenAddress, "edge token: ", edge.token);
         //const result = await getTokenAddressFromGraph(edge.token.toLocaleLowerCase())
         //const tokenAddress = web3.utils.toChecksumAddress(result[0].id)
         await edgeUpdateManager.updateEdge(
             {
-            ...edge,
+                ...edge,
             },
             tokenAddress
         );
@@ -138,8 +138,7 @@ async function updateEdges(edges){
 }
 
 
-async function updateAllEdges(){
-
+async function updateAllEdges(address = "") {
     // Retrieve all the edges from the db in batches
     // This function iterates over all the edges sorted by updatedAt
     // The stop condition of the loop is when the last updated edge
@@ -147,10 +146,10 @@ async function updateAllEdges(){
     const limit = 10000
     let isOld = true
     let count = 0
-    while (isOld){
+    while (isOld) {
         // Here you can choose between updating all the edges or only the edge of one specific user
-        // const edges = await getOldestEdges(limit);
-        const edges = await getUserEdges(limit, ""); // Example of Safe address
+        const action = !!address ? getUserEdges : getOldestEdges;
+        const edges = await action(limit, address); // Example of Safe address
         console.log("Edges.length: ", edges.length);
         console.log("updatedAt of oldest: ", edges[0].updatedAt);
         await updateEdges(edges);
@@ -159,7 +158,7 @@ async function updateAllEdges(){
         const date2 = new Date(Date.now());
         const date1utc = Date.UTC(date1.getFullYear(), date1.getMonth(), date1.getDate());
         const date2utc = Date.UTC(date2.getFullYear(), date2.getMonth(), date2.getDate());
-        const difference = (date2utc - date1utc)/day;
+        const difference = (date2utc - date1utc) / day;
         isOld = difference > 0
     }
 }

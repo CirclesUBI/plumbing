@@ -27,3 +27,5 @@ Run the script to update The edges of a specific account:
 ```bash
 npm start <safe-address>
 ```
+
+Or if you want to update the edges for several accounts, use the `run_update.sh` script.

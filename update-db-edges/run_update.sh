@@ -10,6 +10,6 @@ len=${#arr[@]}
 while [ $i -lt $len ]; do
    echo "$i"
    # or do whatever with individual element of the array
-   export NODE_TLS_REJECT_UNAUTHORIZED=0 && node index.js "${arr[$i]}"
+   node index.js "${arr[$i]}"
    let i++
 done

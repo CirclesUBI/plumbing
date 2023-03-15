@@ -21,3 +21,9 @@ Run the script to update all the edges in the db:
 ```bash
 npm start
 ```
+
+Run the script to update The edges of a specific account:
+
+```bash
+npm start <safe-address>
+```

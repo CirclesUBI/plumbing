@@ -9,7 +9,7 @@ CSV_TABLE_DATA = 'relay_ethereumtx_no_block.csv'
 NAME_PREFIX = "no_block_2021"
 
 
-w3 = Web3(Web3.WebsocketProvider('wss://rpc.xdaichain.com/wss'))
+w3 = Web3(Web3.HTTPProvider('https://rpc.gnosischain.com/'))
 
 
 def read_csv(file, limit=0):
@@ -43,43 +43,50 @@ print("Block height is {}".format(latest_block_height))
 
 result = []
 for (index, tx) in enumerate(ethtx):
-    print("-----------")
-    print("check tx {} - {} / {}".format(tx['tx_hash'], index + 1, len(ethtx)))
+    while True:
+        print("-----------")
+        print("check tx {} - {}/{}".format(tx['tx_hash'], index + 1, len(ethtx)))
 
-    data = {
-        'index': index,
-        'tx_hash': tx['tx_hash'],
-        'tx_status': None,
-        'tx_gas_used': None,
-        'tx_index': None,
-        'block_number': None,
-        'block_gas_limit': None,
-        'block_gas_used': None,
-        'block_hash': None,
-        'block_timestamp': None,
-        'error': None,
-    }
+        data = {
+            'index': index,
+            'tx_hash': tx['tx_hash'],
+            'tx_status': None,
+            'tx_gas_used': None,
+            'tx_index': None,
+            'block_number': None,
+            'block_gas_limit': None,
+            'block_gas_used': None,
+            'block_hash': None,
+            'block_timestamp': None,
+            'error': None,
+        }
 
-    try:
-        chain_tx = w3.eth.getTransactionReceipt(tx['tx_hash'])
-        block = w3.eth.getBlock(int(chain_tx['blockNumber']))
-        data['tx_status'] = chain_tx['status']
-        data['tx_gas_used'] = chain_tx['gasUsed']
-        data['tx_index'] = chain_tx['transactionIndex']
-        data['block_number'] = chain_tx['blockNumber']
-        data['block_gas_limit'] = block['gasLimit']
-        data['block_gas_used'] = block['gasUsed']
-        data['block_hash'] = block['hash'].hex()
-        data['block_timestamp'] = block['timestamp']
-    except TransactionNotFound:
-        print("tx not found {}".format(tx['tx_hash']))
-    except Exception as err:
-        print("Unknown error for tx {}: {}".format(tx['tx_hash'], err))
-        data['error'] = err
+        try:
+            chain_tx = w3.eth.get_transaction_receipt(tx['tx_hash'])
+            block = w3.eth.get_block(int(chain_tx['blockNumber']))
+            data['tx_status'] = chain_tx['status']
+            data['tx_gas_used'] = chain_tx['gasUsed']
+            data['tx_index'] = chain_tx['transactionIndex']
+            data['block_number'] = chain_tx['blockNumber']
+            data['block_gas_limit'] = block['gasLimit']
+            data['block_gas_used'] = block['gasUsed']
+            data['block_hash'] = block['hash'].hex()
+            data['block_timestamp'] = block['timestamp']
+        except TransactionNotFound:
+            print("tx not found {}".format(tx['tx_hash']))
+        except Exception as err:
+            print("Unknown error for tx {}: {}".format(tx['tx_hash'], err))
 
-    result.append(data)
+            if err.response != None and err.response.status_code == 502:
+                print("Retrying!")
+                continue
 
-    # Write on every iteration in case script fails
-    write_csv("result.csv", result)
+            data['error'] = err
+
+        result.append(data)
+
+        # Write on every iteration in case script fails
+        write_csv("result.csv", result)
+        break
 
 print("Write csv file '{}'".format(NAME_PREFIX + 'result.csv'))

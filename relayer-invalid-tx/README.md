@@ -16,10 +16,10 @@ pip install SqlAlchemy web3
 
 3. Update the according configuration values in `db.py` and `analyze.py`.
 
-4. Get `.csv` data with all transactions without an ethereum block from PostgreSQL database. Example:
+4. Get `.csv` data with all transactions without an ethereum block until 30 minutes ago from PostgreSQL database. Example:
 
 ```sql
-\copy (SELECT * FROM relay_ethereumtx WHERE block_id IS NULL AND created > '2020-12-31' AND created < NOW() - INTERVAL '10 minutes') to 'relay_ethereumtx.csv' with csv header
+\copy (SELECT * FROM relay_ethereumtx WHERE block_id IS NULL AND created > '2020-12-31' AND created < NOW() - INTERVAL '30 minutes') to 'relay_ethereumtx.csv' with csv header
 ```
 
 5. Change values in `analyze.py` script to read `relay_ethereumtx.csv` file.

@@ -19,7 +19,7 @@ pip install SqlAlchemy web3
 4. Get `.csv` data with all transactions without an ethereum block from PostgreSQL database. Example:
 
 ```sql
-\copy (SELECT * FROM relay_ethereumtx WHERE block_id IS NULL AND created > '2020-12-31') to 'relay_ethereumtx.csv' with csv header
+\copy (SELECT * FROM relay_ethereumtx WHERE block_id IS NULL AND created > '2020-12-31' AND created < NOW() - INTERVAL '10 minutes') to 'relay_ethereumtx.csv' with csv header
 ```
 
 5. Change values in `analyze.py` script to read `relay_ethereumtx.csv` file.
@@ -42,6 +42,6 @@ python db.py
 
 ## Ideas
 
-* Introduce command line arguments instead of config variables
-* Batch ethereum transactions to improve speed
-* Bundle SQL transactions to improve speed
+- Introduce command line arguments instead of config variables
+- Batch ethereum transactions to improve speed
+- Bundle SQL transactions to improve speed

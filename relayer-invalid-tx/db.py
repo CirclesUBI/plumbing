@@ -41,6 +41,7 @@ def execute_query(query, dry_run=DRY_RUN):
         print_query(query)
         if not dry_run:
             connection.execute(query)
+            connection.commit()
 
 
 data = read_csv(INPUT_FILE)
@@ -115,10 +116,10 @@ for item in data:
         psql_timestamp = datetime.datetime.fromtimestamp(
             int(block_timestamp)).strftime("%Y-%m-%d %H:%M:%S") + '+00'
         query = query.bindparams(number=int(block_number),
-                                 gas_limit=int(block_gas_limit),
-                                 gas_used=int(block_gas_used),
-                                 timestamp=psql_timestamp,
-                                 block_hash=block_hash[2:])
+                                gas_limit=int(block_gas_limit),
+                                gas_used=int(block_gas_used),
+                                timestamp=psql_timestamp,
+                                block_hash=block_hash[2:])
         execute_query(query)
         # 2. Update the `relay_ethereumtx` row to also contain mined data
         query = sql.text(
@@ -132,8 +133,8 @@ for item in data:
             """
         )
         query = query.bindparams(tx_hash=tx_hash,
-                                 gas_used=int(tx_gas_used),
-                                 block_id=int(block_number),
-                                 transaction_index=int(tx_index),
-                                 status=int(tx_status))
+                                gas_used=int(tx_gas_used),
+                                block_id=int(block_number),
+                                transaction_index=int(tx_index),
+                                status=int(tx_status))
         execute_query(query)

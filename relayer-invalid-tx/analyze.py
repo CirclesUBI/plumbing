@@ -2,9 +2,6 @@ import csv
 from web3 import Web3
 from web3.exceptions import TransactionNotFound
 
-# Example from `psql`:
-# \copy (SELECT * FROM relay_ethereumtx WHERE block_id IS NULL AND created >
-# '2020-12-31') to 'relay_ethereumtx_no_block.csv' with csv header
 CSV_TABLE_DATA = 'relay_ethereumtx_no_block.csv'
 NAME_PREFIX = "no_block_2021"
 

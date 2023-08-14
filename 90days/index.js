@@ -1,5 +1,5 @@
 const CirclesCore = require("@circles/core");
-const TokenContract = require("circles-contracts/build/contracts/Token.json");
+const TokenContract = require("@circles/circles-contracts/build/contracts/Token.json");
 const Web3 = require("web3");
 const chalk = require("chalk");
 
@@ -15,21 +15,25 @@ const config = {
   batchEndIndex: 8000,
 };
 
-const privateKey = "secret";
+const privateKey = "secret"
+
 // ===========================
 
-const provider = new Web3.providers.WebsocketProvider("wss://rpc.xdaichain.com/wss");
+const provider = new Web3.providers.WebsocketProvider("wss://rpc.gnosischain.com/wss");
 const web3 = new Web3(provider);
 const account = web3.eth.accounts.privateKeyToAccount(privateKey);
 
 const core = new CirclesCore(web3, {
   hubAddress: "0x29b9a7fBb8995b2423a71cC17cf9810798F6C543",
-  proxyFactoryAddress: "0x8b4404DE0CaECE4b966a9959f134f0eFDa636156",
-  safeMasterAddress: "0x2CB0ebc503dE87CFD8f0eCEED8197bF7850184ae",
+  proxyFactoryAddress: "0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2",
+  safeMasterAddress: "0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552",
+  fallbackHandlerAddress:"0xf48f2B2d2a534e402487b3ee7C18c33Aec0Fe5e4",
+  pathfinderServiceEndpoint: "pathfinder.testing.circles.garden",
+  pathfinderServiceEndpoint: "cli",
   apiServiceEndpoint: "https://api.circles.garden",
   graphNodeEndpoint: "https://api.thegraph.com",
   relayServiceEndpoint: "https://relay.circles.garden",
-  subgraphName: "circlesubi/circles",
+  subgraphName: "circlesubi/circles-ubi",
 });
 
 class TaskRunner {
@@ -128,7 +132,7 @@ async function requestUBI(tokenAddress) {
 
     const txHash = await new Promise((resolve, reject) => {
       web3.eth.accounts.signTransaction(tx, privateKey).then((signed) => {
-        const transaction = web3.eth.sendSignedTransaction(signed.rawTransaction); 
+        const transaction = web3.eth.sendSignedTransaction(signed.rawTransaction);
 
         transaction.on("confirmation", (confirmationNumber, { transactionHash }) => {
           resolve(transactionHash);

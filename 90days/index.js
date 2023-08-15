@@ -15,7 +15,7 @@ const config = {
   batchEndIndex: 8000,
 };
 
-const privateKey = "secret"
+const privateKey = "secret";
 
 // ===========================
 

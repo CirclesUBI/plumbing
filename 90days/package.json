@@ -9,9 +9,11 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
-    "@circles/core": "^2.10.8",
+    "@circles/core": "^4.7.0",
     "chalk": "^4.1.0",
     "isomorphic-fetch": "^3.0.0",
-    "web3": "^1.3.3"
+    "solc": "^0.5.14",
+    "truffle": "^5.10.0",
+    "web3": "^1.10.0"
   }
 }

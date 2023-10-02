@@ -1,6 +1,6 @@
 const { S3Client, DeleteObjectCommand, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 const config = require('./config.json');
-const { User } = require('./models/users');
+const { User } = require('./models/users.js');
 
 const REGION = process.env.AWS_REGION || 'eu-central-1';
 const AWS_S3_DOMAIN = 's3.amazonaws.com';
@@ -14,34 +14,6 @@ const s3 = new S3Client({
     }
 });
 
-async function avatarExists(contentKey) {
-    const url = `https://${bucket}.${AWS_S3_DOMAIN}/${contentKey}`;
-    console.log(url);
-    try {
-        const avatarExists = await User.findOne({
-            where: {
-                avatarUrl: url,
-            },
-        });
-        console.log(avatarExists);
-        if (avatarExists) {
-            console.log(`Avatar image cannot be deleted: ${contentKey}`);
-            return true;
-        } else {
-            console.log(`Delete entry: ${contentKey}`);
-            return false;
-            // const params = {
-            //     Bucket: bucket, // The name of the bucket.
-            //     Key: contentKey, // The name of the object.
-            // };
-            // const results = await s3.send(new DeleteObjectCommand(params));
-            // rconsole.log(results.$metadata.httpStatusCode);
-        }
-    }
-    catch (error) {
-        next(error);
-    }
-}
 
 async function cleanUnusedImagesS3() {
     const command = new ListObjectsV2Command({
@@ -59,11 +31,27 @@ async function cleanUnusedImagesS3() {
           // const contentsList = Contents.map((c) => ` • ${c.Key}`).join("\n");
 
           // Remove the S3 object if they are not present in api db
-          Contents.forEach(async (avatarImage) => {
-            if (! await avatarExists(avatarImage.Key)) {
+          for await (const avatarImage of Contents) {
+            const url = `https://${bucket}.${AWS_S3_DOMAIN}/${avatarImage.Key}`;
+            const exists = await User.findOne({
+                where: {
+                    avatarUrl: url,
+                },
+            });
+            if (exists !== null) {
+                console.log(`Avatar image cannot be deleted: ${url}`);
+            } else {
+                console.log(`****Delete entry: ${url}`);
                 removedObjects += 1;
+                const params = {
+                    Bucket: bucket, // The name of the bucket.
+                    Key: avatarImage.Key, // The name of the object.
+                };
+                const results = await s3.send(new DeleteObjectCommand(params));
+                console.log(results.$metadata.httpStatusCode);
             }
-          })
+
+          }
 
 
           totalObjects += Contents.length;

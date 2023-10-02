@@ -1,0 +1,16 @@
+{
+  "name": "clean-unused-images-s3",
+  "version": "1.0.0",
+  "description": "Script to clean up S3 with unlinked avatarURLs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "llunaCreixent",
+  "license": "AGPL-3.0-or-later",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.421.0",
+    "pg": "^8.11.3",
+    "sequelize": "^6.33.0"
+  }
+}

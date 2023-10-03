@@ -1,6 +1,6 @@
 # Clean up unused images in S3 storage
 
-This scipt deletes the avatar images that are not referenced in the users profilewq data.
+This script deletes the avatar images that are not referenced in the users profile data.
 
 ## Usage
 

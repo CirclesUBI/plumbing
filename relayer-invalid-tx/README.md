@@ -9,7 +9,7 @@ The Relayer does not check for Ethereum Reorgs and might hold invalid data about
 1. Install Python dependencies
 
 ```bash
-pip install SqlAlchemy web3
+pip install SqlAlchemy web3 psycopg2-binary
 ```
 
 2. Make sure you have access to the DigitalOcean PostgreSQL database and a valid SSL certificate on your drive.
